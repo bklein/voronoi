@@ -68,12 +68,12 @@ void generatePointColors(const std::vector<cv::Point2d>& points,
 template <class NormOp>
 class VoronoiParallel : public cv::ParallelLoopBody {
  public:
-VoronoiParallel(const std::vector<cv::Point2d>& points,
-                const std::vector<cv::Vec3b>& colors,
-                cv::Mat3b& image)
-    : points_(points),
-      colors_(colors),
-      image_(image) {
+  VoronoiParallel(const std::vector<cv::Point2d>& points,
+                  const std::vector<cv::Vec3b>& colors,
+                  cv::Mat3b& image)
+      : points_(points),
+        colors_(colors),
+        image_(image) {
   }
 
  private:
@@ -95,7 +95,7 @@ VoronoiParallel(const std::vector<cv::Point2d>& points,
     }
   }
 
-  const std::vector<cv::Point2d> points_;
+  const std::vector<cv::Point2d>& points_;
   const std::vector<cv::Vec3b>& colors_;
   cv::Mat3b& image_;
 };
@@ -104,26 +104,8 @@ template <class NormOp>
 void drawVoronoiImpl(const std::vector<cv::Point2d>& points,
                      const std::vector<cv::Vec3b>& colors,
                      cv::Mat3b& image) {
-#if 0
-  for (int row = 0; row<image.rows; ++row) {
-    for (int col=0; col<image.cols; ++col) {
-      size_t best_idx = std::numeric_limits<size_t>::max();
-      double best_norm = std::numeric_limits<double>::max();
-      for (size_t i=0; i<points.size(); ++i) {
-        const cv::Point2d vec = cv::Point2d(col, row) - points[i];
-        const double norm = NormOp()(vec);
-        if (norm < best_norm) {
-          best_norm = norm;
-          best_idx = i;
-        }
-      }
-      image(row, col) = colors[best_idx];
-    }
-  }
-#else
   VoronoiParallel<NormOp> vp(points, colors, image);
   cv::parallel_for_(cv::Range(0, image.cols*image.rows), vp);
-#endif
 }
 
 struct NormL2 {
