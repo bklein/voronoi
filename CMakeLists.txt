@@ -22,13 +22,13 @@ find_package(gflags REQUIRED)
 
 #option(BUILD_SHARED_LIBS "Shared libs" ON)
 
-add_executable(voronoi voronoi.cc)
-target_include_directories(voronoi
+add_executable(voronoi_example example.cc)
+target_include_directories(voronoi_example
   SYSTEM PRIVATE
     ${OpenCV_INCLUDE_DIRS}
     ${gflags_INCLUDE_DIRS}
 )
-target_link_libraries(voronoi
+target_link_libraries(voronoi_example
   PRIVATE
     ${OpenCV_LIBRARIES}
     ${gflags_LIBRARIES}
